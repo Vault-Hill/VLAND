@@ -14,10 +14,13 @@ contract VLAND is ERC721Upgradeable, OwnableUpgradeable  {
 
         // Base URI
         string private _baseURIextended;
+        
+        uint256 totalSupply;
 
     
-    function VLAND_init(string memory name_, string memory symbol_) initializer public {
+    function VLAND_init(string memory name_, string memory symbol_, uint256 totalSupply_) initializer public {
         __ERC721_init(name_, symbol_);
+        totalSupply = totalSupply_;
     }
     
     function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
@@ -49,13 +52,17 @@ contract VLAND is ERC721Upgradeable, OwnableUpgradeable  {
         
         // mint Non-Fungile Function
         function mintLAND(
-            uint256 tokenID,
+            uint256 _tokenID,
             address _to,
-            string memory tokenURI_
+            string memory _tokenURI
         ) public {
-            _mint(_to, tokenID);
-            _setTokenURI(tokenID, tokenURI_);
-            ownerTokens[_to].push(tokenID);  
+            require(msg.sender != address(0), "Sender cannot be address 0");
+            require(_to != address(0), "_to cannot be address 0");
+            require(_tokenID <= totalSupply, "Cannot mint more than max supply");
+            
+            _mint(_to, _tokenID);
+            _setTokenURI(_tokenID, _tokenURI);
+            ownerTokens[_to].push(_tokenID);  
         }
         
         function tokensOfOwner(address _owner) public view returns (uint256[] memory) {
@@ -67,5 +74,11 @@ contract VLAND is ERC721Upgradeable, OwnableUpgradeable  {
             string memory ver = "v1";
 
             return ver;
+  }
+  
+  //Burn function 
+  function burn(uint256 _tokenId) public onlyOwner {
+      require(_tokenId <= totalSupply, "Incorrect NFT ID");
+      _burn(_tokenId);
   }
 }

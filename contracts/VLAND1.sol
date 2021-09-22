@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract VLAND is ERC721Upgradeable, OwnableUpgradeable  {
+contract VLAND1 is ERC721Upgradeable, OwnableUpgradeable  {
     using StringsUpgradeable for uint256;
         
         // Optional mapping for token URIs
@@ -71,7 +71,7 @@ contract VLAND is ERC721Upgradeable, OwnableUpgradeable  {
         
         function version() public pure returns (string memory) {
             // set version
-            string memory ver = "v1";
+            string memory ver = "v2";
 
             return ver;
   }

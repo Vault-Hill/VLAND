@@ -2,8 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract VLAND1 is ERC721Upgradeable {
+contract VLAND1 is ERC721Upgradeable, OwnableUpgradeable  {
     using StringsUpgradeable for uint256;
         
         // Optional mapping for token URIs
@@ -15,8 +16,8 @@ contract VLAND1 is ERC721Upgradeable {
         string private _baseURIextended;
 
     
-    function VLAND_init() initializer public {
-        super.__ERC721_init("Vault Hill City", "VLAND");
+    function VLAND_init(string memory name_, string memory symbol_) initializer public {
+        __ERC721_init(name_, symbol_);
     }
     
     function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
@@ -61,7 +62,7 @@ contract VLAND1 is ERC721Upgradeable {
             return ownerTokens[_owner];
         }
         
-        function version() public view returns (string memory) {
+        function version() public pure returns (string memory) {
             // set version
             string memory ver = "v2";
 

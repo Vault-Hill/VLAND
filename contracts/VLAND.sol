@@ -16,8 +16,8 @@ contract VLAND is ERC721Upgradeable, OwnableUpgradeable  {
         string private _baseURIextended;
 
     
-    function VLAND_init() initializer public {
-        super.__ERC721_init("Vault Hill City", "VLAND");
+    function VLAND_init(string memory name_, string memory symbol_) initializer public {
+        __ERC721_init(name_, symbol_);
     }
     
     function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
@@ -62,7 +62,7 @@ contract VLAND is ERC721Upgradeable, OwnableUpgradeable  {
             return ownerTokens[_owner];
         }
         
-        function version() public view returns (string memory) {
+        function version() public pure returns (string memory) {
             // set version
             string memory ver = "v1";
 

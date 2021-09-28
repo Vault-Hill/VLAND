@@ -10,26 +10,24 @@ contract VLAND is ERC721Upgradeable, AccessControlUpgradeable  {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
         
     mapping (uint256 => string) private _tokenURIs;
-    mapping (address => uint256[]) ownerTokens;
+    mapping (address => uint256[]) private _ownerTokens;
 
     string private _baseURIextended;
         
-    uint256 maxSupply;
+    uint256 private _maxSupply;
 
-    
     function VLAND_init(address admin, string memory name_, string memory symbol_, uint256 maxSupply_) initializer public {
         __ERC721_init(name_, symbol_);
-        maxSupply = maxSupply_;
+        _maxSupply = maxSupply_;
         _setupRole(DEFAULT_ADMIN_ROLE, admin);
     }
-    
-    function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
-        require(_exists(tokenId), "ERC721Metadata: URI set of nonexistent token");
-        _tokenURIs[tokenId] = _tokenURI;
+
+    function maxSupply() public view returns(uint256) {
+        return _maxSupply;
     }
-        
-    function _baseURI() internal view virtual override returns (string memory) {
-        return _baseURIextended;
+
+    function tokensOfOwner(address _owner) public view returns (uint256[] memory) {
+        return _ownerTokens[_owner];
     }
         
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
@@ -49,7 +47,7 @@ contract VLAND is ERC721Upgradeable, AccessControlUpgradeable  {
         // If there is a baseURI but no tokenURI, concatenate the tokenID to the baseURI.
         return string(abi.encodePacked(base, tokenId.toString()));
     }
-        
+
     // mint Non-Fungile Function
     function mintLAND(
         uint256 _tokenID,
@@ -59,19 +57,24 @@ contract VLAND is ERC721Upgradeable, AccessControlUpgradeable  {
         require(hasRole(MINTER_ROLE, msg.sender), "Acess denied: Caller does not have the minter role");
         require(msg.sender != address(0), "Sender cannot be address 0");
         require(_to != address(0), "_to cannot be address 0");
-        require(_tokenID <= maxSupply, "Cannot mint more than max supply");
+        require(_tokenID <= _maxSupply, "Cannot mint more than max supply");
         require(!_exists(_tokenID), "Token with specified ID already exists");
             
         _mint(_to, _tokenID);
         _setTokenURI(_tokenID, _tokenURI);
-        ownerTokens[_to].push(_tokenID);  
-    }
-        
-    function tokensOfOwner(address _owner) public view returns (uint256[] memory) {
-        return ownerTokens[_owner];
+        _ownerTokens[_to].push(_tokenID);  
     }
 
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Upgradeable, AccessControlUpgradeable) returns (bool) {
         return super.supportsInterface(interfaceId);
+    }
+
+    function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
+        require(_exists(tokenId), "ERC721Metadata: URI set of nonexistent token");
+        _tokenURIs[tokenId] = _tokenURI;
+    }
+        
+    function _baseURI() internal view virtual override returns (string memory) {
+        return _baseURIextended;
     }
 }

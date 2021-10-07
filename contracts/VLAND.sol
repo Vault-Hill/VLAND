@@ -16,13 +16,14 @@ contract VLAND is ERC721Upgradeable, AccessControlUpgradeable  {
         
     uint256 private _maxSupply;
 
-    function VLAND_init(address admin, string memory name_, string memory symbol_, uint256 maxSupply_) initializer public {
+    function VLAND_init(address admin, string memory name_, string memory symbol_, string memory baseUri_, uint256 maxSupply_) initializer public {
         __ERC721_init(name_, symbol_);
+        _baseURIextended = baseUri_;
         _maxSupply = maxSupply_;
         _setupRole(DEFAULT_ADMIN_ROLE, admin);
     }
 
-    function maxSupply() public view returns(uint256) {
+    function maxSupply() external view returns(uint256) {
         return _maxSupply;
     }
 
@@ -53,7 +54,7 @@ contract VLAND is ERC721Upgradeable, AccessControlUpgradeable  {
         uint256 _tokenID,
         address _to,
         string memory _tokenURI
-    ) public {
+    ) external {
         require(hasRole(MINTER_ROLE, msg.sender), "Acess denied: Caller does not have the minter role");
         require(msg.sender != address(0), "Sender cannot be address 0");
         require(_to != address(0), "_to cannot be address 0");

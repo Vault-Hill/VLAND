@@ -27,6 +27,7 @@ module.exports = async function (deployer, admin) {
       argv['admin'],
       'Vault Hill Land',
       'VLAND',
+      'vaulthill.io/',
       500000000 // This will be changed during deployment to main-net to match agreed upon maxSupply.
     ],
     { deployer, initializer: 'VLAND_init' }

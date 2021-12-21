@@ -41,7 +41,7 @@ contract VLAND is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeable,
     }
         
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+        require(_exists(tokenId), "URI query for nonexistent token");
 
         string memory _tokenURI = _tokenURIs[tokenId];
         string memory base = _baseURI();
@@ -58,13 +58,11 @@ contract VLAND is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeable,
         return string(abi.encodePacked(base, tokenId.toString()));
     }
 
-    // mint Non-Fungile Function
     function mintLAND(
         uint256 _tokenID,
         address _to,
         string memory _tokenURI
-    ) external {
-        require(hasRole(MINTER_ROLE, msg.sender), "Acess denied: Caller does not have the minter role");
+    ) external onlyRole(MINTER_ROLE) {
         require(msg.sender != address(0), "Sender cannot be address 0");
         require(_to != address(0), "_to cannot be address 0");
         require(_tokenID <= _maxSupply, "Cannot mint more than max supply");

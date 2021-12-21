@@ -1,10 +1,12 @@
 {
   "scripts": {
-    "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol"
+    "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol",
+    "prettier:solidity": "./node_modules/.bin/prettier --write contracts/**/*.sol"
   },
   "devDependencies": {
     "@openzeppelin/truffle-upgrades": "^1.9.1",
     "ganache-cli": "^6.12.2",
+    "husky": "^7.0.4",
     "prettier": "^2.5.1",
     "prettier-plugin-solidity": "^1.0.0-beta.19",
     "solhint": "^3.3.6",
@@ -16,5 +18,10 @@
     "@truffle/hdwallet-provider": "^1.5.0",
     "dotenv": "^10.0.0",
     "truffle-plugin-verify": "^0.5.15"
+  },
+  "husky": {
+    "hooks": {
+       "pre-push": "npm run solhint"
+    }
   }
 }

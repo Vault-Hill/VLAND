@@ -6,19 +6,29 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
-
-contract VLAND is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeable, AccessControlUpgradeable  {
+contract VLAND is
+    Initializable,
+    ERC721Upgradeable,
+    ERC721EnumerableUpgradeable,
+    AccessControlUpgradeable
+{
     using StringsUpgradeable for uint256;
 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-        
-    mapping (uint256 => string) private _tokenURIs;
+
+    mapping(uint256 => string) private _tokenURIs;
 
     string private _baseURIextended;
-        
+
     uint256 private _maxSupply;
 
-    function initialize(address admin, string memory name_, string memory symbol_, string memory baseUri_, uint256 maxSupply_) public initializer {
+    function initialize(
+        address admin,
+        string memory name_,
+        string memory symbol_,
+        string memory baseUri_,
+        uint256 maxSupply_
+    ) public initializer {
         __ERC721_init(name_, symbol_);
         __ERC721Enumerable_init();
         _baseURIextended = baseUri_;
@@ -26,7 +36,7 @@ contract VLAND is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeable,
         _setupRole(DEFAULT_ADMIN_ROLE, admin);
     }
 
-    function maxSupply() external view returns(uint256) {
+    function maxSupply() external view returns (uint256) {
         return _maxSupply;
     }
 
@@ -39,13 +49,13 @@ contract VLAND is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeable,
         }
         return tokenIds;
     }
-        
+
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "URI query for nonexistent token");
 
         string memory _tokenURI = _tokenURIs[tokenId];
         string memory base = _baseURI();
-            
+
         // If there is no base URI, return the token URI.
         if (bytes(base).length == 0) {
             return _tokenURI;
@@ -67,12 +77,18 @@ contract VLAND is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeable,
         require(_to != address(0), "_to cannot be address 0");
         require(_tokenID <= _maxSupply, "Cannot mint more than max supply");
         require(!_exists(_tokenID), "Token with specified ID already exists");
-            
+
         _mint(_to, _tokenID);
         _setTokenURI(_tokenID, _tokenURI);
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Upgradeable, ERC721EnumerableUpgradeable, AccessControlUpgradeable) returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC721Upgradeable, ERC721EnumerableUpgradeable, AccessControlUpgradeable)
+        returns (bool)
+    {
         return super.supportsInterface(interfaceId);
     }
 
@@ -80,13 +96,16 @@ contract VLAND is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeable,
         require(_exists(tokenId), "ERC721Metadata: URI set of nonexistent token");
         _tokenURIs[tokenId] = _tokenURI;
     }
-        
+
     function _baseURI() internal view virtual override returns (string memory) {
         return _baseURIextended;
     }
 
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override(ERC721Upgradeable, ERC721EnumerableUpgradeable) {
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal virtual override(ERC721Upgradeable, ERC721EnumerableUpgradeable) {
         super._beforeTokenTransfer(from, to, tokenId);
     }
-
 }

@@ -1,23 +1,26 @@
 //SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.4;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
-contract VLAND is ERC721Upgradeable, AccessControlUpgradeable  {
+
+contract VLAND is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeable, AccessControlUpgradeable  {
     using StringsUpgradeable for uint256;
 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
         
     mapping (uint256 => string) private _tokenURIs;
-    mapping (address => uint256[]) private _ownerTokens;
 
     string private _baseURIextended;
         
     uint256 private _maxSupply;
 
-    function VLAND_init(address admin, string memory name_, string memory symbol_, string memory baseUri_, uint256 maxSupply_) initializer public {
+    function initialize(address admin, string memory name_, string memory symbol_, string memory baseUri_, uint256 maxSupply_) public initializer {
         __ERC721_init(name_, symbol_);
+        __ERC721Enumerable_init();
         _baseURIextended = baseUri_;
         _maxSupply = maxSupply_;
         _setupRole(DEFAULT_ADMIN_ROLE, admin);
@@ -28,7 +31,13 @@ contract VLAND is ERC721Upgradeable, AccessControlUpgradeable  {
     }
 
     function tokensOfOwner(address _owner) public view returns (uint256[] memory) {
-        return _ownerTokens[_owner];
+        uint256 balance = balanceOf(_owner);
+        uint256[] memory tokenIds = new uint256[](balance);
+
+        for (uint256 index = 0; index < balance; index++) {
+            tokenIds[index] = tokenOfOwnerByIndex(_owner, index);
+        }
+        return tokenIds;
     }
         
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
@@ -63,10 +72,9 @@ contract VLAND is ERC721Upgradeable, AccessControlUpgradeable  {
             
         _mint(_to, _tokenID);
         _setTokenURI(_tokenID, _tokenURI);
-        _ownerTokens[_to].push(_tokenID);  
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Upgradeable, AccessControlUpgradeable) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Upgradeable, ERC721EnumerableUpgradeable, AccessControlUpgradeable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 
@@ -78,4 +86,9 @@ contract VLAND is ERC721Upgradeable, AccessControlUpgradeable  {
     function _baseURI() internal view virtual override returns (string memory) {
         return _baseURIextended;
     }
+
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override(ERC721Upgradeable, ERC721EnumerableUpgradeable) {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
 }

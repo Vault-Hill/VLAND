@@ -21,7 +21,7 @@
   },
   "husky": {
     "hooks": {
-       "pre-push": "npm run solhint"
+       "pre-push": "npm run prettier"
     }
   }
 }

@@ -1,4 +1,4 @@
 /build
 .env
 /node_modules
-/.openzeppelin/unknown-80001.json
+/.openzeppelin/unknown-*.json

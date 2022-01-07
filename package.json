@@ -4,6 +4,7 @@
     "prettier:solidity": "./node_modules/.bin/prettier --write contracts/**/*.sol"
   },
   "devDependencies": {
+    "@openzeppelin/test-helpers": "^0.5.15",
     "@openzeppelin/truffle-upgrades": "^1.9.1",
     "ganache-cli": "^6.12.2",
     "husky": "^7.0.4",
@@ -21,7 +22,7 @@
   },
   "husky": {
     "hooks": {
-       "pre-push": "npm run prettier"
+      "pre-push": "npm run prettier"
     }
   }
 }

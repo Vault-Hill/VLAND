@@ -1,6 +1,6 @@
 # VLAND
 
-VLAND is the native ERC-721 token that represent virtual plots of land within the Vault Hill eco-system.
+VLAND is the native ERC-721 token that represent virtual plots of land within the Vault Hill metaverse.
 
 ## Installation
 
@@ -30,6 +30,11 @@ npx truffle console --network development
 
 See https://www.trufflesuite.com/docs/truffle/reference/truffle-commands
 
+## Testing
+
+Spin up a local blockchain using ganache-cli - `npx ganache-cli --deterministic`.
+
+Run the following command, replacing the admin address with the first account address logged out from the ganache-cli - `npx truffle test --admin "<ADMIN_ADDRESS>"`.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

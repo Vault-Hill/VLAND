@@ -30,7 +30,7 @@ module.exports = async function (deployer, admin) {
       'vaulthill.io/',
       500000000 // This will be changed during deployment to main-net to match agreed upon maxSupply.
     ],
-    { deployer, initializer: 'VLAND_init' }
+    { deployer, initializer: 'initialize' }
   );
   console.log ('instance: ', instance.address);
 };

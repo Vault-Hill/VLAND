@@ -231,19 +231,6 @@ contract('VLAND', (accounts) => {
             );
         });
 
-        it('returns the token URI suffix if there is no base URI', async () => {
-            const freshVland = await getNewInitialisedVland(deployerAddress, "");
-            
-            const minterRole = await freshVland.MINTER_ROLE();
-            await freshVland.grantRole(minterRole, deployerAddress);
-            
-            const uri = 'token-1';
-            await freshVland.mintLAND(1, deployerAddress, uri);
-
-            const tokenURI = await freshVland.tokenURI(1);
-            expect(tokenURI).to.equal(uri);
-        });
-
         it('returns the concantenated token URI if base URI and tokenURI are set', async () => {
             const baseUri = "vaulthill.io/";
             const freshVland = await getNewInitialisedVland(deployerAddress, baseUri);
@@ -255,24 +242,42 @@ contract('VLAND', (accounts) => {
             await freshVland.mintLAND(1, deployerAddress, uri);
 
             const tokenURI = await freshVland.tokenURI(1);
-            console.log(`tokenURI`, tokenURI)
             expect(tokenURI).to.equal(`${baseUri}${uri}`);
         });
+    })
 
-        it('returns the concatenation of the baseURI with the tokenId if there is no tokenURI', async () => {
-            const baseUri = "vaulthill.io/";
-            const freshVland = await getNewInitialisedVland(deployerAddress, baseUri);
+    describe('setBaseURI', () => {
+        it('reverts if the base URI parameter is an empty string', async () => {
+            const initialBaseURI = "test.io/";
+            const freshVland = await getNewInitialisedVland(deployerAddress, initialBaseURI);
 
+            const empty = "";
+            const expectedError = "Base URI cannot be empty";
+            await expectRevert(
+                freshVland.setBaseURI(empty),
+                expectedError
+            );
+        })
+
+        it('sets a new base URI', async () => {
+            const initialBaseURI = "test.io/";
+            const freshVland = await getNewInitialisedVland(deployerAddress, initialBaseURI);
+            
             const minterRole = await freshVland.MINTER_ROLE();
             await freshVland.grantRole(minterRole, deployerAddress);
             
-            const tokenId = 1;
-            const uri = '';
-            await freshVland.mintLAND(tokenId, deployerAddress, uri);
+            const uri = 'token-1';
+            await freshVland.mintLAND(1, deployerAddress, uri);
 
-            const tokenURI = await freshVland.tokenURI(tokenId);
-            console.log(`tokenURI`, tokenURI)
-            expect(tokenURI).to.equal(`${baseUri}${tokenId}`);
-        });
+            const initialTokenURI = await freshVland.tokenURI(1);
+            expect(initialTokenURI).to.equal(`${initialBaseURI}${uri}`);
+
+            // Set new base URI
+            const newBaseURI = "newBase.io/";
+            await freshVland.setBaseURI(newBaseURI);
+
+            const newTokenURI = await freshVland.tokenURI(1);
+            expect(newTokenURI).to.equal(`${newBaseURI}${uri}`);
+        })
     })
 });

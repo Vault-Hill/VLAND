@@ -52,26 +52,20 @@ contract VLAND is
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "URI query for nonexistent token");
-
-        string memory _tokenURI = _tokenURIs[tokenId];
+        string memory uri = _tokenURIs[tokenId];
         string memory base = _baseURI();
+        return string(abi.encodePacked(base, uri));
+    }
 
-        // If there is no base URI, return the token URI.
-        if (bytes(base).length == 0) {
-            return _tokenURI;
-        }
-        // If both are set, concatenate the baseURI and tokenURI (via abi.encodePacked).
-        if (bytes(_tokenURI).length > 0) {
-            return string(abi.encodePacked(base, _tokenURI));
-        }
-        // If there is a baseURI but no tokenURI, concatenate the tokenID to the baseURI.
-        return string(abi.encodePacked(base, tokenId.toString()));
+    function setBaseURI(string memory _uri) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(bytes(_uri).length > 0, "Base URI cannot be empty");
+        _baseURIextended = _uri;
     }
 
     function mintLAND(
         uint256 _tokenID,
         address _to,
-        string memory _tokenURI
+        string memory _tokenURISuffix
     ) external onlyRole(MINTER_ROLE) {
         require(msg.sender != address(0), "Sender cannot be address 0");
         require(_to != address(0), "_to cannot be address 0");
@@ -79,7 +73,7 @@ contract VLAND is
         require(!_exists(_tokenID), "Token with specified ID already exists");
 
         _mint(_to, _tokenID);
-        _setTokenURI(_tokenID, _tokenURI);
+        _setTokenURI(_tokenID, _tokenURISuffix);
     }
 
     function supportsInterface(bytes4 interfaceId)

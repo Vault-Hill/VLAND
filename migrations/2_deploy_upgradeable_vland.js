@@ -1,4 +1,3 @@
-
 /**
  * Contract version 1 contract artifact
  */
@@ -27,8 +26,8 @@ module.exports = async function (deployer, admin) {
       argv['admin'],
       'Vault Hill Land',
       'VLAND',
-      'vaulthill.io/',
-      500000000 // This will be changed during deployment to main-net to match agreed upon maxSupply.
+      process.env.BASE_URI,
+      +process.env.VLAND_AMOUNT
     ],
     { deployer, initializer: 'initialize' }
   );
